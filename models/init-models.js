@@ -8,10 +8,10 @@ function initModels(sequelize) {
   var post_table = _post_table(sequelize, DataTypes);
   var user_table = _user_table(sequelize, DataTypes);
 
-  post_table.belongsTo(movie_table, { as: "post_movie", foreignKey: "post_movie_id"});
-  movie_table.hasMany(post_table, { as: "post_tables", foreignKey: "post_movie_id"});
-  post_table.belongsTo(user_table, { as: "post_user", foreignKey: "post_user_id"});
-  user_table.hasMany(post_table, { as: "post_tables", foreignKey: "post_user_id"});
+  post_table.belongsTo(movie_table, {  foreignKey: "post_movie_id"});
+  movie_table.hasMany(post_table, {  foreignKey: "post_movie_id"});
+  post_table.belongsTo(user_table, {  foreignKey: "post_user_id"});
+  user_table.hasMany(post_table, {  foreignKey: "post_user_id"});
 
   return {
     movie_table,

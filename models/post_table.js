@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('post_table', {
     post_id: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
@@ -11,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     post_description: {
-      type: DataTypes.STRING(500),
+      type: DataTypes.STRING(1000),
       allowNull: false
     },
     post_user_id: {
