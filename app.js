@@ -24,9 +24,9 @@ app.use(session({  // 2
 }));
 
 http.createServer(app).listen(app.get('port'), () => {
-    console.log(app.get('port'), '번 포트에서 대기 중');
+    console.log(app.get('port'), 'th port is wating for query...');
 });
 app.get('/', (req, res) => {
-    res.send("라우팅")
+    res.send("routing")
 })
 app.use('/api', Router) //use ./router.js file as router

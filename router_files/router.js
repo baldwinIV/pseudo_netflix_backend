@@ -33,6 +33,11 @@ router.get("/movie/postings", async (req, res, next) => {
     let tmp = await getAllMoviePost(req.query.movie_id);
     res.send(tmp);
 });
+router.get("/movie/find", async (req, res, next) => {
+    console.log(req.query.movie_id)
+    let tmp = await getMovieName(req.query.movie_id);
+    res.send(tmp);
+});
 router.get("/user", async (req, res, next) => {
 
     let tmp = await findAllFrom("user");
@@ -48,7 +53,6 @@ router.get("/user/postings", async (req, res, next) => {
 router.get("/confirmSession", async (req, res, next) => {
     let msg = { "email": "XXXX", "birth": "XXXX" }
     if (req.session.user) {
-        console.log("로그인 성공(세션제작성공)")
         msg = req.session.user;
         console.log(msg)
     } res.send(msg);
@@ -56,17 +60,17 @@ router.get("/confirmSession", async (req, res, next) => {
 router.get("/deleteSession", async (req, res, next) => {
     req.session.destroy();
     res.send("delete_complete")
-    console.log(`session을 삭제하였습니다.`);
+    console.log(`session is deleted.`);
     // res.redirect(`/api/confirmSession`);
 });
 
-
+    
 router.post("/register", async (req, res, next) => {
     //(Email, name, sex, birthyear, password) 
-    registerID("ksanghun10@asdf.com", "Sexman", "male", "1998", "password123");
-    res.send("register_complete")
-    console.log(`회원가입이 되었습니다.`);
-    // res.redirect(`/api/confirmSession`);
+    
+    const toret = registerID(req.body.UserEmail,req.body.UserName, "male", req.body.UserBirthyear, req.body.UserPassword);
+    console.log("asdasdasdasdasd",toret)
+    res.send(toret)
 });
 
 router.post("/post/register", async (req, res, next) => {
@@ -78,11 +82,11 @@ router.post("/post/register", async (req, res, next) => {
 
 router.get('/addSession', async (req, res) => {
     if (req.session.user) {
-        console.log(`세션이 이미 존재합니다.`);
+        console.log(`session already exists.`);
         res.send("alreadyloggined");
     }
     else {
-        //받은 세션 리퀘스트와 db속에 저장되어 있는 아이디가 일치하는지 검사하고, true or false로 리턴한다.
+        
         const email = req.query.email;
         const pw = req.query.password;
         var isValid = await examineLogin(email, pw);
@@ -134,12 +138,24 @@ async function getAllUserPost(user_id) {
 }
 
 async function getAllMoviePost(movie_id) {
-    console.log(movie_id)
     const movieposts = await models.post_table.findAll({
         include: [{
             model: models.movie_table,
             where: { movie_id: movie_id }
         }]
+    });
+    console.log("-----", JSON.stringify(movieposts))
+    return movieposts;
+}
+
+async function getMovieName(_movie_id) {
+    
+    const movieposts = await models.movie_table.findOne({
+        raw : true,
+        attributes: ['movie_description', 'movie_title', 'movie_director', 'movie_year'],
+        where: {
+            movie_id: _movie_id
+        }
     });
     console.log("-----", JSON.stringify(movieposts))
     return movieposts;
@@ -177,9 +193,11 @@ async function registerID(Email, name, sex, birthyear, password) {
     })
         .then((result) => {
             console.log("ID save complete: ", result);
+            return 0;
         })
         .catch((err) => {
             console.log("save Error: ", err);
+            return -1;
         });
 }
 
@@ -195,9 +213,11 @@ async function registerPost(user_id, description, title, movie_id, post_imagepat
     })
         .then((result) => {
             console.log("Post save complete: ", result);
+           
         })
         .catch((err) => {
             console.log("save Error: ", err);
+           
         });
 }
 
